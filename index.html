@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holiday Hack</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f3ee;--ink:#1a1714;--ink2:#6b6560;--ink3:#b0a89e;
+  --surface:#fff;--surf2:#f0ece5;--border:rgba(26,23,20,0.10);
+  --green:#2d7a4f;--green-bg:#e6f4ec;--amber:#c47c1a;--amber-bg:#fdf3e0;
+  --red:#c0392b;--red-bg:#fdecea;--blue:#2563be;--blue-bg:#e8f0fd;
+  --purple:#6d3aac;--purple-bg:#f0ebfb;
+  --radius:14px;--radius-sm:8px;
+  --font-display:'Fraunces',Georgia,serif;--font-body:'DM Sans',system-ui,sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+select,input{font-family:inherit}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── MAIL BTN ── */
+.mail-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:8px;
+  font-size:16px;text-decoration:none;
+  transition:background 0.15s,transform 0.15s;
+  flex-shrink:0;
+}
+.mail-btn:hover{background:var(--surf2);transform:scale(1.15)}
+
+/* ── MADE BY BADGE (fixed top-right) ── */
+.made-by-badge{
+  position:fixed;
+  top:12px;
+  right:16px;
+  z-index:9999;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 14px 6px 10px;
+  border-radius:20px;
+  background:rgba(26,23,20,0.88);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:0.5px solid rgba(255,255,255,0.12);
+  box-shadow:0 2px 12px rgba(0,0,0,0.18);
+  font-size:12px;
+  font-weight:500;
+  color:rgba(240,236,229,0.75);
+  letter-spacing:0.01em;
+  pointer-events:none;
+  font-family:var(--font-body);
+}
+.made-by-badge em{
+  font-style:normal;
+  font-weight:700;
+  color:#7ecf9e;
+  letter-spacing:0em;
+}
+.made-by-badge .avatar{
+  width:18px;height:18px;border-radius:50%;
+  background:linear-gradient(135deg,#7ecf9e,#2d7a4f);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:#fff;flex-shrink:0;
+}
+
+/* ── HERO ── */
+.hero{background:var(--ink);color:#f0ece5;padding:64px 24px 56px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 50%,rgba(45,122,79,0.25) 0%,transparent 65%),radial-gradient(ellipse 50% 80% at 20% 80%,rgba(196,124,26,0.15) 0%,transparent 60%);pointer-events:none}
+.hero-inner{max-width:900px;margin:0 auto;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);padding:4px 12px;border-radius:20px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:rgba(240,236,229,0.7);margin-bottom:20px}
+.hero h1{font-family:var(--font-display);font-size:clamp(36px,6vw,64px);font-weight:300;line-height:1.1;letter-spacing:-0.02em;color:#f0ece5;margin-bottom:14px}
+.hero h1 em{font-style:italic;color:#7ecf9e;font-weight:400}
+.hero p{font-size:16px;color:rgba(240,236,229,0.65);max-width:440px;line-height:1.65;margin-bottom:32px}
+.hero-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.control-group{display:flex;flex-direction:column;gap:5px}
+.control-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(240,236,229,0.45)}
+.hero select{padding:10px 14px;border-radius:10px;font-size:14px;font-weight:500;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#f0ece5;min-width:200px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(240,236,229,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;cursor:pointer}
+.hero select option{background:#1e1b18;color:#f0ece5}
+.year-select{padding:10px 14px;border-radius:10px;font-size:14px;border:0.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#f0ece5;appearance:none;cursor:pointer}
+.year-select option{background:#1e1b18}
+
+/* ── STATS BAR ── */
+.stats-bar{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 24px}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat-item{padding:16px 0;border-right:0.5px solid var(--border);display:flex;flex-direction:column;gap:2px;padding-right:16px;padding-left:16px}
+.stat-item:first-child{padding-left:0}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:var(--font-display);font-size:24px;font-weight:600;color:var(--ink);line-height:1}
+.stat-label{font-size:11px;color:var(--ink2);letter-spacing:0.02em}
+
+/* ── NAV ── */
+.nav-wrap{background:var(--surface);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:2px;padding:8px 24px 8px 0;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-logo{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--ink);margin-right:16px;white-space:nowrap;padding-left:24px;letter-spacing:-0.01em;flex-shrink:0}
+.nav-logo span{color:var(--green)}
+.nav-tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--ink2);transition:all 0.15s;white-space:nowrap}
+.nav-tab:hover{background:var(--surf2);color:var(--ink)}
+.nav-tab.active{background:var(--ink);color:var(--bg)}
+.nav-tab .badge{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:8px;font-size:9px;font-weight:600;background:var(--green);color:#fff;margin-left:4px;vertical-align:middle}
+.nav-tab.active .badge{background:var(--green-bg);color:var(--green)}
+
+/* ── MAIN ── */
+.main{max-width:900px;margin:0 auto;padding:24px}
+
+/* ── INSIGHTS ── */
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:600px){.insights-grid{grid-template-columns:1fr}}
+.insight-card{border-radius:var(--radius);padding:18px 20px;border:0.5px solid transparent}
+.insight-card.green{background:var(--green-bg);border-color:rgba(45,122,79,0.2)}
+.insight-card.amber{background:var(--amber-bg);border-color:rgba(196,124,26,0.2)}
+.insight-card.purple{background:var(--purple-bg);border-color:rgba(109,58,172,0.2)}
+.insight-card.blue{background:var(--blue-bg);border-color:rgba(37,99,190,0.2)}
+.insight-eyebrow{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.insight-card.green .insight-eyebrow{color:var(--green)}
+.insight-card.amber .insight-eyebrow{color:var(--amber)}
+.insight-card.purple .insight-eyebrow{color:var(--purple)}
+.insight-card.blue .insight-eyebrow{color:var(--blue)}
+.insight-title{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--ink);line-height:1.2;margin-bottom:3px}
+.insight-sub{font-size:12px;color:var(--ink2)}
+.insight-tip{font-size:11px;font-weight:500;margin-top:8px;padding:4px 10px;border-radius:6px;display:inline-block}
+.insight-card.green .insight-tip{background:rgba(45,122,79,0.12);color:var(--green)}
+.insight-card.amber .insight-tip{background:rgba(196,124,26,0.12);color:var(--amber)}
+
+/* ── FILTERS ── */
+.filters-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filter-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:0.5px solid var(--border);color:var(--ink2);background:var(--surface);transition:all 0.15s}
+.filter-btn:hover{border-color:var(--ink3);color:var(--ink)}
+.filter-btn.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search-input{flex:1;min-width:140px;max-width:260px;padding:6px 12px;border-radius:20px;font-size:12px;border:0.5px solid var(--border);background:var(--surface);color:var(--ink);outline:none;transition:border-color 0.15s}
+.search-input:focus{border-color:var(--ink3)}
+.search-input::placeholder{color:var(--ink3)}
+
+/* ── HOLIDAY CARDS ── */
+.holidays-list{display:flex;flex-direction:column;gap:8px}
+.holiday-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;transition:all 0.15s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.holiday-card:hover{border-color:var(--ink3);box-shadow:var(--shadow)}
+.holiday-card.past{opacity:0.55}
+.holiday-card .left{flex:1}
+.holiday-name{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.holiday-date{font-size:12px;color:var(--ink2)}
+.holiday-tip{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:6px;background:var(--green-bg);color:var(--green)}
+.holiday-tip.amber{background:var(--amber-bg);color:var(--amber)}
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:0.04em}
+.tag.bank{background:var(--blue-bg);color:var(--blue)}
+.tag.long{background:var(--amber-bg);color:var(--amber)}
+.tag.today{background:var(--ink);color:var(--bg)}
+.save-btn{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:500;border:0.5px solid var(--border);color:var(--ink2);background:var(--surf2);display:flex;align-items:center;gap:4px;flex-shrink:0;transition:all 0.15s;white-space:nowrap}
+.save-btn:hover{border-color:var(--ink3)}
+.save-btn.saved{background:var(--purple-bg);color:var(--purple);border-color:rgba(109,58,172,0.3)}
+.strategies-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px}
+.strategy-pill{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--surf2);color:var(--ink2);border:0.5px solid var(--border)}
+.hol-marker-bar{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.hol-marker-label{font-size:10px;color:var(--ink3)}
+
+/* ── CALENDAR ── */
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.cal-year-nav{display:flex;gap:6px;align-items:center}
+.cal-year-btn{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;border:0.5px solid var(--border);color:var(--ink2);background:var(--surface);transition:all 0.15s}
+.cal-year-btn:hover{border-color:var(--ink3);color:var(--ink)}
+.cal-year-label{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--ink);padding:0 8px}
+.cal-legend{display:flex;gap:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.cal-month{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.cal-month-header{padding:10px 14px;border-bottom:0.5px solid var(--border);font-size:13px;font-weight:500;color:var(--ink);font-family:var(--font-display)}
+.cal-body{padding:8px}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:3px}
+.cal-day-name{text-align:center;font-size:9px;font-weight:600;color:var(--ink3);padding:2px 0;letter-spacing:0.04em}
+.cal-days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day{text-align:center;font-size:11px;padding:3px 1px;border-radius:5px;position:relative;line-height:1.4;transition:all 0.1s;user-select:none}
+.cal-day.clickable{cursor:pointer}
+.cal-day.clickable:hover{opacity:0.85;transform:scale(1.05)}
+.cal-day.weekend{color:var(--red);background:var(--red-bg)}
+.cal-day.is-holiday{background:var(--green-bg);color:var(--green);font-weight:600}
+.cal-day.is-long{background:var(--amber-bg);color:var(--amber);font-weight:600}
+.cal-day.is-today{background:var(--ink)!important;color:#f0ece5!important;font-weight:700}
+.cal-day.past{opacity:0.4}
+.cal-day.is-saved{outline:2px solid var(--purple);outline-offset:-1px}
+.cal-day .dot{position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%}
+.cal-day.is-holiday .dot{background:var(--green)}
+.cal-day.is-long .dot{background:var(--amber)}
+.cal-day.sel-start{background:var(--purple)!important;color:#fff!important;font-weight:700}
+.cal-day.sel-end{background:var(--purple)!important;color:#fff!important;font-weight:700}
+.cal-day.sel-range{background:var(--purple-bg)!important;color:var(--purple)!important}
+.cal-day.sel-weekend-range{background:var(--purple-bg)!important;color:var(--purple)!important;opacity:0.6}
+
+/* ── RANGE BAR ── */
+.range-info-bar{background:var(--purple-bg);border:0.5px solid rgba(109,58,172,0.3);border-radius:var(--radius-sm);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;font-size:13px}
+.ri-label{color:var(--purple);font-weight:500}
+.ri-hint{font-size:11px;color:var(--ink3)}
+.range-save-btn{padding:6px 16px;border-radius:8px;font-size:12px;font-weight:500;background:var(--purple);color:#fff;border:none;transition:opacity 0.15s;cursor:pointer}
+.range-save-btn:hover{opacity:0.85}
+.range-clear-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;background:var(--surf2);color:var(--ink2);border:0.5px solid var(--border);cursor:pointer}
+
+/* ── PLANS ── */
+.plans-empty{text-align:center;padding:80px 20px}
+.plans-empty-icon{font-size:48px;margin-bottom:16px}
+.plans-empty-title{font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.plans-empty-sub{font-size:14px;color:var(--ink2)}
+.plans-year-group{margin-bottom:24px}
+.plans-year-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);margin-bottom:10px}
+.plan-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px;transition:all 0.15s}
+.plan-item:hover{border-color:var(--ink3)}
+.plan-name{font-size:14px;font-weight:500;color:var(--ink)}
+.plan-meta{font-size:12px;color:var(--ink2);margin-top:1px}
+.plan-actions{display:flex;gap:6px;align-items:center}
+.status-pill{font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;text-transform:uppercase;letter-spacing:0.04em}
+.status-pill.planned{background:var(--green-bg);color:var(--green)}
+.status-pill.range{background:var(--purple-bg);color:var(--purple)}
+.remove-btn{padding:4px 8px;border-radius:6px;background:var(--red-bg);color:var(--red);border:0.5px solid rgba(192,57,43,0.2);font-size:12px;transition:all 0.15s;cursor:pointer}
+.remove-btn:hover{background:var(--red);color:#fff}
+.export-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:500;background:var(--ink);color:var(--bg);border:none;transition:opacity 0.15s;margin-top:16px;cursor:pointer}
+.export-btn:hover{opacity:0.85}
+
+/* ── INSPIRATION ── */
+.inspiration-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.inspo-card{border-radius:var(--radius);overflow:hidden;background:var(--surface);border:0.5px solid var(--border);transition:transform 0.2s,box-shadow 0.2s;cursor:pointer}
+.inspo-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.inspo-img{height:130px;display:flex;align-items:center;justify-content:center;font-size:52px}
+.inspo-body{padding:14px 16px}
+.inspo-title{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.inspo-sub{font-size:12px;color:var(--ink2);margin-bottom:8px}
+.inspo-tags{display:flex;gap:5px;flex-wrap:wrap}
+.inspo-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--surf2);color:var(--ink3)}
+
+/* ── SHARE ── */
+.share-card-preview{background:linear-gradient(135deg,var(--ink) 0%,#2a3520 100%);border-radius:var(--radius);padding:32px;color:#f0ece5;position:relative;overflow:hidden;margin-bottom:14px}
+.share-card-preview::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 85% 30%,rgba(45,122,79,0.3) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 15% 80%,rgba(196,124,26,0.2) 0%,transparent 50%)}
+.share-card-inner{position:relative}
+.share-card-logo{font-family:var(--font-display);font-size:13px;font-weight:600;color:rgba(240,236,229,0.6);margin-bottom:24px}
+.share-card-title{font-family:var(--font-display);font-size:clamp(22px,4vw,34px);font-weight:300;line-height:1.15;margin-bottom:20px}
+.share-card-title em{font-style:italic;color:#7ecf9e;font-weight:400}
+.share-card-holidays{display:flex;flex-wrap:wrap;gap:8px}
+.share-holiday-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(255,255,255,0.1);color:rgba(240,236,229,0.85);border:0.5px solid rgba(255,255,255,0.15)}
+.share-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.share-btn{padding:9px 18px;border-radius:10px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;cursor:pointer}
+.share-btn.primary{background:var(--ink);color:#f0ece5;border:none}
+.share-btn.primary:hover{opacity:0.85}
+.share-btn.secondary{background:var(--surf2);color:var(--ink);border:0.5px solid var(--border)}
+.share-btn.secondary:hover{border-color:var(--ink3)}
+
+/* ── LOADING / ERROR ── */
+.loading-state{text-align:center;padding:60px 20px}
+.loading-spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--ink);border-radius:50%;margin:0 auto 16px;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--ink2)}
+.error-msg{background:var(--amber-bg);border:0.5px solid rgba(196,124,26,0.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--amber);margin-bottom:14px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp 0.35s ease both}
+.fade-up-d1{animation-delay:0.05s}
+.fade-up-d2{animation-delay:0.10s}
+@keyframes fadeOut{to{opacity:0;transform:translateX(-50%) translateY(10px)}}
+.notif-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#f0ece5;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:9999;animation:fadeUp 0.3s ease both,fadeOut 0.4s 2.2s ease both;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.25);pointer-events:none}
+
+/* ── MISC ── */
+.section-title{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--ink);margin-bottom:16px;letter-spacing:-0.01em}
+
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .stat-item:nth-child(2){border-right:none}
+  .stat-item:nth-child(3){border-right:0.5px solid var(--border)}
+  .stat-item:nth-child(4){border-right:none}
+  .main{padding:16px}
+  .hero{padding:40px 20px 36px}
+  .cal-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .made-by-badge{top:8px;right:10px;padding:5px 10px 5px 8px;font-size:11px}
+}
+@media(max-width:480px){
+  .hero-controls{flex-direction:column;align-items:stretch}
+  .hero select,.year-select{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- MADE BY BADGE -->
+<div class="made-by-badge">
+  <div class="avatar">SJ</div>
+  Made by <em>Shreya Jain</em>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">✈ Vacation Optimizer</div>
+    <h1>Plan your next<br><em>long break</em> with Holiday Hack </h1>
+    <p>Discover public holidays, find long weekend opportunities, and stretch your leave days further than ever.</p>
+    <div class="hero-controls">
+      <div class="control-group">
+        <span class="control-label">Country</span>
+        <select id="countrySelect"></select>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Year</span>
+        <select id="yearSelect" class="year-select"></select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item"><div class="stat-num" id="statTotal">–</div><div class="stat-label">Total holidays</div></div>
+    <div class="stat-item"><div class="stat-num" id="statRemaining">–</div><div class="stat-label">Remaining this year</div></div>
+    <div class="stat-item"><div class="stat-num" id="statLong">–</div><div class="stat-label">Long break chances</div></div>
+    <div class="stat-item"><div class="stat-num" id="statSaved">0</div><div class="stat-label">Saved in plan</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-inner">
+    <div class="nav-logo">Holiday<span>Hack</span></div>
+    <button class="nav-tab active" data-view="holidays">Holidays</button>
+    <button class="nav-tab" data-view="calendar">Calendar</button>
+    <button class="nav-tab" data-view="plans">Plans <span class="badge" id="planBadge" style="display:none">0</span></button>
+    <button class="nav-tab" data-view="inspiration">Inspiration</button>
+    <button class="nav-tab" data-view="share">Share</button>
+    <a href="mailto:shreyajainn0905@gmail.com" class="social-link" title="Email">📧</a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="mainContent">
+  <div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading holidays…</div></div>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notif" class="notif-banner" style="display:none"></div>
+
+<script>
+const COUNTRIES=[
+  {code:"AD",name:"Andorra"},{code:"AE",name:"United Arab Emirates"},{code:"AF",name:"Afghanistan"},
+  {code:"AG",name:"Antigua and Barbuda"},{code:"AL",name:"Albania"},{code:"AM",name:"Armenia"},
+  {code:"AO",name:"Angola"},{code:"AR",name:"Argentina"},{code:"AT",name:"Austria"},
+  {code:"AU",name:"Australia"},{code:"AZ",name:"Azerbaijan"},{code:"BA",name:"Bosnia and Herzegovina"},
+  {code:"BB",name:"Barbados"},{code:"BD",name:"Bangladesh"},{code:"BE",name:"Belgium"},
+  {code:"BF",name:"Burkina Faso"},{code:"BG",name:"Bulgaria"},{code:"BH",name:"Bahrain"},
+  {code:"BI",name:"Burundi"},{code:"BJ",name:"Benin"},{code:"BN",name:"Brunei"},
+  {code:"BO",name:"Bolivia"},{code:"BR",name:"Brazil"},{code:"BS",name:"Bahamas"},
+  {code:"BT",name:"Bhutan"},{code:"BW",name:"Botswana"},{code:"BY",name:"Belarus"},
+  {code:"BZ",name:"Belize"},{code:"CA",name:"Canada"},{code:"CD",name:"DR Congo"},
+  {code:"CF",name:"Central African Republic"},{code:"CG",name:"Congo"},{code:"CH",name:"Switzerland"},
+  {code:"CI",name:"Ivory Coast"},{code:"CL",name:"Chile"},{code:"CM",name:"Cameroon"},
+  {code:"CN",name:"China"},{code:"CO",name:"Colombia"},{code:"CR",name:"Costa Rica"},
+  {code:"CU",name:"Cuba"},{code:"CV",name:"Cape Verde"},{code:"CY",name:"Cyprus"},
+  {code:"CZ",name:"Czech Republic"},{code:"DE",name:"Germany"},{code:"DJ",name:"Djibouti"},
+  {code:"DK",name:"Denmark"},{code:"DM",name:"Dominica"},{code:"DO",name:"Dominican Republic"},
+  {code:"DZ",name:"Algeria"},{code:"EC",name:"Ecuador"},{code:"EE",name:"Estonia"},
+  {code:"EG",name:"Egypt"},{code:"ER",name:"Eritrea"},{code:"ES",name:"Spain"},
+  {code:"ET",name:"Ethiopia"},{code:"FI",name:"Finland"},{code:"FJ",name:"Fiji"},
+  {code:"FM",name:"Micronesia"},{code:"FR",name:"France"},{code:"GA",name:"Gabon"},
+  {code:"GB",name:"United Kingdom"},{code:"GD",name:"Grenada"},{code:"GE",name:"Georgia"},
+  {code:"GH",name:"Ghana"},{code:"GM",name:"Gambia"},{code:"GN",name:"Guinea"},
+  {code:"GQ",name:"Equatorial Guinea"},{code:"GR",name:"Greece"},{code:"GT",name:"Guatemala"},
+  {code:"GW",name:"Guinea-Bissau"},{code:"GY",name:"Guyana"},{code:"HN",name:"Honduras"},
+  {code:"HR",name:"Croatia"},{code:"HT",name:"Haiti"},{code:"HU",name:"Hungary"},
+  {code:"ID",name:"Indonesia"},{code:"IE",name:"Ireland"},{code:"IL",name:"Israel"},
+  {code:"IN",name:"India"},{code:"IQ",name:"Iraq"},{code:"IR",name:"Iran"},
+  {code:"IS",name:"Iceland"},{code:"IT",name:"Italy"},{code:"JM",name:"Jamaica"},
+  {code:"JO",name:"Jordan"},{code:"JP",name:"Japan"},{code:"KE",name:"Kenya"},
+  {code:"KG",name:"Kyrgyzstan"},{code:"KH",name:"Cambodia"},{code:"KI",name:"Kiribati"},
+  {code:"KM",name:"Comoros"},{code:"KN",name:"Saint Kitts and Nevis"},{code:"KP",name:"North Korea"},
+  {code:"KR",name:"South Korea"},{code:"KW",name:"Kuwait"},{code:"KZ",name:"Kazakhstan"},
+  {code:"LA",name:"Laos"},{code:"LB",name:"Lebanon"},{code:"LC",name:"Saint Lucia"},
+  {code:"LI",name:"Liechtenstein"},{code:"LK",name:"Sri Lanka"},{code:"LR",name:"Liberia"},
+  {code:"LS",name:"Lesotho"},{code:"LT",name:"Lithuania"},{code:"LU",name:"Luxembourg"},
+  {code:"LV",name:"Latvia"},{code:"LY",name:"Libya"},{code:"MA",name:"Morocco"},
+  {code:"MC",name:"Monaco"},{code:"MD",name:"Moldova"},{code:"ME",name:"Montenegro"},
+  {code:"MG",name:"Madagascar"},{code:"MH",name:"Marshall Islands"},{code:"MK",name:"North Macedonia"},
+  {code:"ML",name:"Mali"},{code:"MM",name:"Myanmar"},{code:"MN",name:"Mongolia"},
+  {code:"MR",name:"Mauritania"},{code:"MT",name:"Malta"},{code:"MU",name:"Mauritius"},
+  {code:"MV",name:"Maldives"},{code:"MW",name:"Malawi"},{code:"MX",name:"Mexico"},
+  {code:"MY",name:"Malaysia"},{code:"MZ",name:"Mozambique"},{code:"NA",name:"Namibia"},
+  {code:"NE",name:"Niger"},{code:"NG",name:"Nigeria"},{code:"NI",name:"Nicaragua"},
+  {code:"NL",name:"Netherlands"},{code:"NO",name:"Norway"},{code:"NP",name:"Nepal"},
+  {code:"NR",name:"Nauru"},{code:"NZ",name:"New Zealand"},{code:"OM",name:"Oman"},
+  {code:"PA",name:"Panama"},{code:"PE",name:"Peru"},{code:"PG",name:"Papua New Guinea"},
+  {code:"PH",name:"Philippines"},{code:"PK",name:"Pakistan"},{code:"PL",name:"Poland"},
+  {code:"PT",name:"Portugal"},{code:"PW",name:"Palau"},{code:"PY",name:"Paraguay"},
+  {code:"QA",name:"Qatar"},{code:"RO",name:"Romania"},{code:"RS",name:"Serbia"},
+  {code:"RU",name:"Russia"},{code:"RW",name:"Rwanda"},{code:"SA",name:"Saudi Arabia"},
+  {code:"SB",name:"Solomon Islands"},{code:"SC",name:"Seychelles"},{code:"SD",name:"Sudan"},
+  {code:"SE",name:"Sweden"},{code:"SG",name:"Singapore"},{code:"SI",name:"Slovenia"},
+  {code:"SK",name:"Slovakia"},{code:"SL",name:"Sierra Leone"},{code:"SM",name:"San Marino"},
+  {code:"SN",name:"Senegal"},{code:"SO",name:"Somalia"},{code:"SR",name:"Suriname"},
+  {code:"SS",name:"South Sudan"},{code:"ST",name:"São Tomé and Príncipe"},{code:"SV",name:"El Salvador"},
+  {code:"SY",name:"Syria"},{code:"SZ",name:"Eswatini"},{code:"TD",name:"Chad"},
+  {code:"TG",name:"Togo"},{code:"TH",name:"Thailand"},{code:"TJ",name:"Tajikistan"},
+  {code:"TL",name:"Timor-Leste"},{code:"TM",name:"Turkmenistan"},{code:"TN",name:"Tunisia"},
+  {code:"TO",name:"Tonga"},{code:"TR",name:"Turkey"},{code:"TT",name:"Trinidad and Tobago"},
+  {code:"TV",name:"Tuvalu"},{code:"TZ",name:"Tanzania"},{code:"UA",name:"Ukraine"},
+  {code:"UG",name:"Uganda"},{code:"US",name:"United States"},{code:"UY",name:"Uruguay"},
+  {code:"UZ",name:"Uzbekistan"},{code:"VA",name:"Vatican City"},{code:"VC",name:"Saint Vincent"},
+  {code:"VE",name:"Venezuela"},{code:"VN",name:"Vietnam"},{code:"VU",name:"Vanuatu"},
+  {code:"WS",name:"Samoa"},{code:"YE",name:"Yemen"},{code:"ZA",name:"South Africa"},
+  {code:"ZM",name:"Zambia"},{code:"ZW",name:"Zimbabwe"}
+];
+
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DAY_NAMES=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const DAY_ABBR=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+const FALLBACK={
+  IN:[{date:"01-26",name:"Republic Day"},{date:"03-14",name:"Holi"},{date:"04-14",name:"Dr. Ambedkar Jayanti"},{date:"04-18",name:"Good Friday"},{date:"05-01",name:"Labour Day"},{date:"08-15",name:"Independence Day"},{date:"10-02",name:"Gandhi Jayanti"},{date:"10-20",name:"Dussehra"},{date:"11-01",name:"Diwali"},{date:"11-05",name:"Guru Nanak Jayanti"},{date:"12-25",name:"Christmas"},{date:"01-01",name:"New Year's Day"}],
+  US:[{date:"01-01",name:"New Year's Day"},{date:"01-20",name:"MLK Day"},{date:"02-17",name:"Presidents' Day"},{date:"05-26",name:"Memorial Day"},{date:"06-19",name:"Juneteenth"},{date:"07-04",name:"Independence Day"},{date:"09-01",name:"Labor Day"},{date:"11-11",name:"Veterans Day"},{date:"11-27",name:"Thanksgiving"},{date:"11-28",name:"Day after Thanksgiving"},{date:"12-25",name:"Christmas"},{date:"12-31",name:"New Year's Eve"}],
+  GB:[{date:"01-01",name:"New Year's Day"},{date:"04-18",name:"Good Friday"},{date:"04-21",name:"Easter Monday"},{date:"05-05",name:"Early May Bank Holiday"},{date:"05-26",name:"Spring Bank Holiday"},{date:"08-25",name:"Summer Bank Holiday"},{date:"12-25",name:"Christmas Day"},{date:"12-26",name:"Boxing Day"}],
+  DE:[{date:"01-01",name:"New Year's Day"},{date:"04-18",name:"Good Friday"},{date:"04-21",name:"Easter Monday"},{date:"05-01",name:"Labour Day"},{date:"05-29",name:"Ascension Day"},{date:"06-09",name:"Whit Monday"},{date:"10-03",name:"German Unity Day"},{date:"12-25",name:"Christmas Day"},{date:"12-26",name:"Boxing Day"}],
+  JP:[{date:"01-01",name:"New Year's Day"},{date:"01-13",name:"Coming of Age Day"},{date:"02-11",name:"National Foundation Day"},{date:"03-20",name:"Vernal Equinox"},{date:"04-29",name:"Showa Day"},{date:"05-03",name:"Constitution Day"},{date:"05-04",name:"Greenery Day"},{date:"05-05",name:"Children's Day"},{date:"07-21",name:"Marine Day"},{date:"08-11",name:"Mountain Day"},{date:"09-15",name:"Respect for the Aged Day"},{date:"11-03",name:"Culture Day"},{date:"11-23",name:"Labour Thanksgiving Day"}],
+  AU:[{date:"01-01",name:"New Year's Day"},{date:"01-27",name:"Australia Day"},{date:"04-18",name:"Good Friday"},{date:"04-21",name:"Easter Monday"},{date:"04-25",name:"ANZAC Day"},{date:"06-09",name:"Queen's Birthday"},{date:"12-25",name:"Christmas Day"},{date:"12-26",name:"Boxing Day"}],
+  FR:[{date:"01-01",name:"New Year's Day"},{date:"04-21",name:"Easter Monday"},{date:"05-01",name:"Labour Day"},{date:"05-08",name:"Victory in Europe Day"},{date:"05-29",name:"Ascension"},{date:"06-09",name:"Whit Monday"},{date:"07-14",name:"Bastille Day"},{date:"08-15",name:"Assumption"},{date:"11-01",name:"All Saints' Day"},{date:"11-11",name:"Armistice Day"},{date:"12-25",name:"Christmas"}],
+  CA:[{date:"01-01",name:"New Year's Day"},{date:"02-17",name:"Family Day"},{date:"04-18",name:"Good Friday"},{date:"05-19",name:"Victoria Day"},{date:"07-01",name:"Canada Day"},{date:"09-01",name:"Labour Day"},{date:"10-13",name:"Thanksgiving"},{date:"11-11",name:"Remembrance Day"},{date:"12-25",name:"Christmas Day"},{date:"12-26",name:"Boxing Day"}]
+};
+const DEFAULT_FALLBACK=[{date:"01-01",name:"New Year's Day"},{date:"05-01",name:"Labour Day"},{date:"12-25",name:"Christmas Day"},{date:"12-26",name:"Boxing Day"},{date:"11-01",name:"All Saints' Day"}];
+
+const state={
+  country:localStorage.getItem('nlb-country')||'IN',
+  year:parseInt(localStorage.getItem('nlb-year'))||new Date().getFullYear(),
+  view:'holidays',filter:'all',search:'',holidays:[],
+  loading:false,error:null,
+  savedPlan:JSON.parse(localStorage.getItem('nlb-plan')||'[]'),
+  calYear:new Date().getFullYear(),
+  selStart:null,selEnd:null
+};
+
+function fmt(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function fmtDisplay(dateStr){const d=new Date(dateStr+'T00:00:00');return `${DAY_NAMES[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`}
+function fmtShort(dateStr){const d=new Date(dateStr+'T00:00:00');return `${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}`}
+function savePersist(){localStorage.setItem('nlb-plan',JSON.stringify(state.savedPlan));localStorage.setItem('nlb-country',state.country);localStorage.setItem('nlb-year',state.year)}
+function isSaved(date,name){return state.savedPlan.some(p=>p.date===date&&p.name===name)}
+function notify(msg){
+  const el=document.getElementById('notif');
+  el.textContent=msg;el.style.display='block';el.style.animation='none';
+  void el.offsetWidth;
+  el.style.animation='fadeUp 0.3s ease both,fadeOut 0.4s 2.2s ease both';
+  setTimeout(()=>{el.style.display='none'},2700);
+}
+
+async function fetchHolidays(code,year){
+  try{
+    const res=await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/${code}`);
+    if(!res.ok)throw new Error('API error');
+    const data=await res.json();
+    if(!Array.isArray(data)||data.length===0)throw new Error('No data');
+    return data.map(h=>({date:h.date,name:h.localName||h.name,type:(h.types||[]).includes('Bank')?'bank':'public'}));
+  }catch{
+    const fb=FALLBACK[code]||DEFAULT_FALLBACK;
+    return fb.map(h=>({
+      date:h.date.includes('-')&&h.date.split('-')[0].length===4?h.date:`${year}-${h.date}`,
+      name:h.name,type:'public'
+    }));
+  }
+}
+
+function analyzeHolidays(holidays){
+  const today=new Date();today.setHours(0,0,0,0);
+  return holidays.map(holiday=>{
+    const dateObj=new Date(holiday.date+'T00:00:00');
+    const dow=dateObj.getDay();
+    const isWeekend=dow===0||dow===6;
+    const isPast=dateObj<today;
+    const isToday=fmt(dateObj)===fmt(today);
+    const strategies=[];
+    if(!isWeekend){
+      if(dow===1){strategies.push({days:4,leaves:1,tip:'Fri–Mon · 4-day break'});strategies.push({days:5,leaves:2,tip:'Thu–Mon · 5-day break'})}
+      else if(dow===2){strategies.push({days:4,leaves:1,tip:'Sat–Tue · 4-day break'})}
+      else if(dow===4){strategies.push({days:4,leaves:1,tip:'Thu–Sun · 4-day break'});strategies.push({days:7,leaves:3,tip:'Mon–Sun · 7-day break!'})}
+      else if(dow===3){strategies.push({days:9,leaves:4,tip:'Mon–Sun · 9-day mega break!'});strategies.push({days:5,leaves:2,tip:'Sat–Wed · 5-day break'})}
+      else if(dow===5){strategies.push({days:3,leaves:0,tip:'Fri–Sun · 3-day break'});strategies.push({days:4,leaves:1,tip:'Fri–Mon · 4-day break'})}
+    }
+    const isLong=!isWeekend&&strategies.length>0&&strategies[0].days>=4;
+    return{...holiday,dateObj,dow,isWeekend,isPast,isToday,strategies,isLong};
+  }).sort((a,b)=>a.dateObj-b.dateObj);
+}
+
+function initSelects(){
+  const cs=document.getElementById('countrySelect');
+  COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=c.name;if(c.code===state.country)o.selected=true;cs.appendChild(o)});
+  cs.addEventListener('change',()=>{state.country=cs.value;savePersist();loadAndRender()});
+  const ys=document.getElementById('yearSelect');
+  const thisYear=new Date().getFullYear();
+  const startYear=Math.min(thisYear-1,2024);
+  for(let y=startYear;y<=2100;y++){const o=document.createElement('option');o.value=y;o.textContent=y;if(y===state.year)o.selected=true;ys.appendChild(o)};
+  ys.addEventListener('change',()=>{state.year=parseInt(ys.value);state.calYear=state.year;savePersist();loadAndRender()});
+}
+
+function initNav(){
+  document.querySelectorAll('.nav-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      state.view=btn.dataset.view;
+      document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+}
+
+function updateStats(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const h=state.holidays;
+  document.getElementById('statTotal').textContent=h.length;
+  document.getElementById('statRemaining').textContent=h.filter(x=>x.dateObj>=today).length;
+  document.getElementById('statLong').textContent=h.filter(x=>x.isLong).length;
+  document.getElementById('statSaved').textContent=state.savedPlan.length;
+  const badge=document.getElementById('planBadge');
+  if(state.savedPlan.length>0){badge.textContent=state.savedPlan.length;badge.style.display='inline-flex'}
+  else{badge.style.display='none'}
+}
+
+async function loadAndRender(){
+  state.loading=true;state.error=null;
+  document.getElementById('mainContent').innerHTML=`<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading holidays for ${COUNTRIES.find(c=>c.code===state.country)?.name||state.country}…</div></div>`;
+  try{
+    const raw=await fetchHolidays(state.country,state.year);
+    state.holidays=analyzeHolidays(raw);
+    updateStats();state.loading=false;render();
+  }catch(e){state.loading=false;state.error='Could not load holiday data. Showing sample data.';render()}
+}
+
+function render(){
+  const mc=document.getElementById('mainContent');
+  mc.innerHTML='';
+  if(state.error)mc.innerHTML+=`<div class="error-msg">⚠ ${state.error}</div>`;
+  if(state.view==='holidays')renderHolidays(mc);
+  else if(state.view==='calendar')renderCalendar(mc);
+  else if(state.view==='plans')renderPlans(mc);
+  else if(state.view==='inspiration')renderInspiration(mc);
+  else if(state.view==='share')renderShare(mc);
+}
+
+function holidaysInRange(s,e){
+  const sd=new Date(s+'T00:00:00'),ed=new Date(e+'T00:00:00');
+  return state.holidays.filter(h=>h.dateObj>=sd&&h.dateObj<=ed);
+}
+function daysBetween(s,e){
+  return Math.round((new Date(e+'T00:00:00')-new Date(s+'T00:00:00'))/86400000)+1;
+}
+
+function renderHolidays(mc){
+  const today=new Date();today.setHours(0,0,0,0);
+  const h=state.holidays;
+  const upcoming=h.filter(x=>x.dateObj>=today);
+  const nextHoliday=upcoming[0];
+  const nextLong=upcoming.find(x=>x.isLong);
+  const bestMonths=(()=>{const m={};h.forEach(x=>{const k=x.dateObj.getMonth();m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>MONTHS[k])})();
+
+  let html='<div class="insights-grid fade-up">';
+  if(nextHoliday){const t=nextHoliday.strategies?.[0];html+=`<div class="insight-card green"><div class="insight-eyebrow">Next Holiday</div><div class="insight-title">${escHtml(nextHoliday.name)}</div><div class="insight-sub">${fmtDisplay(nextHoliday.date)}</div>${t&&t.leaves>0?`<div class="insight-tip">💡 ${t.tip}</div>`:''}</div>`}
+  if(nextLong){const s=nextLong.strategies[0];html+=`<div class="insight-card amber"><div class="insight-eyebrow">Best Upcoming Break</div><div class="insight-title">${escHtml(nextLong.name)}</div><div class="insight-sub">${fmtDisplay(nextLong.date)}</div><div class="insight-tip">${s.leaves>0?`Take ${s.leaves} day${s.leaves>1?'s':''} → `:''}${s.tip}</div></div>`}
+  if(bestMonths.length)html+=`<div class="insight-card blue"><div class="insight-eyebrow">Best months to travel</div><div class="insight-title">${bestMonths.join(', ')}</div><div class="insight-sub">Most holidays concentrated here</div></div>`;
+  html+=`<div class="insight-card purple"><div class="insight-eyebrow">Holidays remaining</div><div class="insight-title" style="font-size:32px">${upcoming.length}</div><div class="insight-sub">out of ${h.length} total in ${state.year}</div></div></div>`;
+
+  html+=`<div class="filters-bar fade-up fade-up-d1">
+    <button class="filter-btn ${state.filter==='all'?'active':''}" onclick="setFilter('all')">All holidays</button>
+    <button class="filter-btn ${state.filter==='long'?'active':''}" onclick="setFilter('long')">Long breaks only</button>
+    <button class="filter-btn ${state.filter==='upcoming'?'active':''}" onclick="setFilter('upcoming')">Upcoming only</button>
+    <input class="search-input" placeholder="Search holidays…" value="${escHtml(state.search)}" oninput="setSearch(this.value)" />
+  </div>`;
+
+  let filtered=h;
+  if(state.filter==='long')filtered=h.filter(x=>x.isLong);
+  if(state.filter==='upcoming')filtered=h.filter(x=>x.dateObj>=today);
+  if(state.search)filtered=filtered.filter(x=>x.name.toLowerCase().includes(state.search.toLowerCase()));
+
+  html+='<div class="holidays-list fade-up fade-up-d2">';
+  if(!filtered.length){html+=`<div style="text-align:center;padding:50px 20px;color:var(--ink2);font-size:14px">No holidays found.</div>`}
+  else filtered.forEach(hol=>{
+    const saved=isSaved(hol.date,hol.name);
+    const bestS=hol.strategies?.[0];
+    const tags=[];
+    if(hol.isToday)tags.push('<span class="tag today">Today</span>');
+    if(hol.type==='bank')tags.push('<span class="tag bank">Bank</span>');
+    if(hol.isLong)tags.push('<span class="tag long">Long break</span>');
+    const morePills=hol.strategies&&hol.strategies.length>1?`<div class="strategies-wrap">${hol.strategies.slice(1).map(s=>`<span class="strategy-pill">${s.tip}</span>`).join('')}</div>`:'';
+
+    const nearbyHols=h.filter(x=>x.date!==hol.date&&Math.abs(x.dateObj-hol.dateObj)/86400000<=14).slice(0,5);
+    const markerHtml=nearbyHols.length?`<div class="hol-marker-bar"><span class="hol-marker-label">Nearby:</span>${nearbyHols.map(n=>{const diff=Math.round((n.dateObj-hol.dateObj)/86400000);return`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:${n.isLong?'var(--amber-bg)':'var(--green-bg)'};color:${n.isLong?'var(--amber)':'var(--green)'};font-weight:500">${diff>0?'+':''}${diff}d ${escHtml(n.name)}</span>`}).join('')}</div>`:'';
+
+    html+=`<div class="holiday-card ${hol.isPast?'past':''}">
+      <div class="left">
+        <div class="holiday-name">${escHtml(hol.name)}${tags.join('')}</div>
+        <div class="holiday-date">${fmtDisplay(hol.date)}</div>
+        ${bestS&&bestS.leaves>0?`<div class="holiday-tip ${bestS.days>=7?'amber':''}">✦ ${bestS.tip}</div>`:''}
+        ${bestS&&bestS.leaves===0?`<div class="holiday-tip">✦ ${bestS.tip}</div>`:''}
+        ${morePills}${markerHtml}
+      </div>
+      <button class="save-btn ${saved?'saved':''}" onclick="toggleSave('${hol.date}','${escAttr(hol.name)}')">${saved?'★ Saved':'☆ Save'}</button>
+    </div>`;
+  });
+  html+='</div>';
+  mc.innerHTML+=html;
+}
+
+function renderCalendar(mc){
+  const today=new Date();today.setHours(0,0,0,0);
+  const cY=state.calYear;
+  const hMap={};
+  state.holidays.forEach(h=>{hMap[h.date]=h});
+  const selS=state.selStart?new Date(state.selStart+'T00:00:00'):null;
+  const selE=state.selEnd?new Date(state.selEnd+'T00:00:00'):null;
+
+  let rangeBar='';
+  if(state.selStart&&!state.selEnd){
+    rangeBar=`<div class="range-info-bar fade-up"><div><div class="ri-label">📅 Start: ${fmtDisplay(state.selStart)}</div><div class="ri-hint">Click an end date, then press Enter to save</div></div><button class="range-clear-btn" onclick="clearRangeSel()">Clear</button></div>`;
+  } else if(state.selStart&&state.selEnd){
+    const days=daysBetween(state.selStart,state.selEnd);
+    const hols=holidaysInRange(state.selStart,state.selEnd);
+    rangeBar=`<div class="range-info-bar fade-up"><div><div class="ri-label">📅 ${fmtShort(state.selStart)} → ${fmtShort(state.selEnd)} · ${days} days${hols.length?' · '+hols.length+' holiday'+(hols.length>1?'s':'')+(hols.length?' ('+hols.map(h=>h.name).join(', ')+')':''):''}</div><div class="ri-hint">Press Enter or click Save to add to your plan</div></div><div style="display:flex;gap:6px"><button class="range-save-btn" onclick="saveRangePlan()">Save range</button><button class="range-clear-btn" onclick="clearRangeSel()">Clear</button></div></div>`;
+  }
+
+  let html=`${rangeBar}
+  <div class="cal-header fade-up">
+    <div class="cal-year-nav">
+      <button class="cal-year-btn" onclick="calNav(-1)">← ${cY-1}</button>
+      <div class="cal-year-label">${cY}</div>
+      <button class="cal-year-btn" onclick="calNav(1)">${cY+1} →</button>
+    </div>
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green-bg);border:1px solid var(--green)"></div>Holiday</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--amber-bg);border:1px solid var(--amber)"></div>Long break</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red-bg);border:1px solid var(--red)"></div>Weekend</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--purple-bg);border:1px solid var(--purple)"></div>Selected range</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--ink)"></div>Today</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--ink2);margin-bottom:16px;padding:8px 12px;background:var(--surf2);border-radius:var(--radius-sm)">
+    💡 Click a start date, then an end date. Press <kbd style="background:var(--surface);border:0.5px solid var(--border);border-radius:4px;padding:1px 5px;font-size:11px">Enter</kbd> or the Save button to add the range to your plan.
+  </div>
+  <div class="cal-grid fade-up fade-up-d1">`;
+
+  for(let m=0;m<12;m++){
+    const firstDay=new Date(cY,m,1).getDay();
+    const daysInMonth=new Date(cY,m+1,0).getDate();
+    html+=`<div class="cal-month"><div class="cal-month-header">${MONTHS[m]} ${cY}</div><div class="cal-body"><div class="cal-days-header">${DAY_ABBR.map(d=>`<div class="cal-day-name">${d}</div>`).join('')}</div><div class="cal-days-grid">`;
+    for(let e=0;e<firstDay;e++)html+='<div></div>';
+    for(let d=1;d<=daysInMonth;d++){
+      const ds=`${cY}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dObj=new Date(cY,m,d);
+      const dow=dObj.getDay();
+      const isWE=dow===0||dow===6;
+      const hol=hMap[ds];
+      const isToday=fmt(today)===ds;
+      const isPast=dObj<today;
+      const saved=state.savedPlan.some(p=>p.date===ds);
+      const isSelStart=state.selStart===ds;
+      const isSelEnd=state.selEnd===ds;
+      const inRange=selS&&selE&&dObj>selS&&dObj<selE;
+
+      let cls='cal-day clickable';
+      if(isToday)cls+=' is-today';
+      else if(isSelStart)cls+=' sel-start';
+      else if(isSelEnd)cls+=' sel-end';
+      else if(inRange)cls+=isWE?' sel-weekend-range':' sel-range';
+      else if(hol&&hol.isLong)cls+=' is-long';
+      else if(hol)cls+=' is-holiday';
+      else if(isWE)cls+=' weekend';
+      if(isPast&&!isToday)cls+=' past';
+      if(saved&&!isSelStart&&!isSelEnd)cls+=' is-saved';
+
+      const dot=hol?'<div class="dot"></div>':'';
+      const title=hol?`title="${escAttr(hol.name)}"`:'' ;
+      html+=`<div class="${cls}" data-date="${ds}" ${title}>${d}${dot}</div>`;
+    }
+    html+='</div></div></div>';
+  }
+  html+='</div>';
+  mc.innerHTML+=html;
+
+  mc.querySelectorAll('.cal-day.clickable[data-date]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const ds=el.dataset.date;
+      if(!state.selStart||state.selEnd){state.selStart=ds;state.selEnd=null}
+      else if(ds===state.selStart){state.selStart=null;state.selEnd=null}
+      else if(ds<state.selStart){state.selEnd=state.selStart;state.selStart=ds}
+      else{state.selEnd=ds}
+      render();
+    });
+  });
+
+  document.removeEventListener('keydown',window._enterHandler);
+  window._enterHandler=function(e){
+    if(e.key==='Enter'&&state.view==='calendar'&&state.selStart&&state.selEnd)saveRangePlan();
+  };
+  document.addEventListener('keydown',window._enterHandler);
+}
+
+window.saveRangePlan=function(){
+  if(!state.selStart||!state.selEnd)return;
+  const countryName=COUNTRIES.find(c=>c.code===state.country)?.name||state.country;
+  const days=daysBetween(state.selStart,state.selEnd);
+  const hols=holidaysInRange(state.selStart,state.selEnd);
+  const label=`${fmtShort(state.selStart)}–${fmtShort(state.selEnd)} (${days}d)`;
+  if(state.savedPlan.some(p=>p.date===state.selStart&&p.name===label)){notify('Range already saved!');return}
+  state.savedPlan.push({date:state.selStart,endDate:state.selEnd,name:label,country:countryName,days,holidays:hols.map(h=>h.name),isRange:true});
+  savePersist();updateStats();
+  notify(`Saved ${days}-day range with ${hols.length} holiday${hols.length!==1?'s':''}!`);
+  state.selStart=null;state.selEnd=null;render();
+};
+window.clearRangeSel=function(){state.selStart=null;state.selEnd=null;render()};
+
+function renderPlans(mc){
+  const p=state.savedPlan;
+  if(!p.length){
+    mc.innerHTML+=`<div class="plans-empty fade-up"><div class="plans-empty-icon">📅</div><div class="plans-empty-title">No saved plans yet</div><div class="plans-empty-sub">Save holidays from the list, or select a date range on the Calendar tab and press Enter.</div></div>`;
+    return;
+  }
+  const grouped={};
+  p.forEach(item=>{const y=item.date.slice(0,4);if(!grouped[y])grouped[y]=[];grouped[y].push(item)});
+  let html='<div class="fade-up">';
+  Object.entries(grouped).sort().forEach(([year,items])=>{
+    html+=`<div class="plans-year-group"><div class="plans-year-label">${year}</div>`;
+    items.sort((a,b)=>a.date.localeCompare(b.date)).forEach(item=>{
+      if(item.isRange){
+        const badges=item.holidays&&item.holidays.length?item.holidays.map(h=>`<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:var(--green-bg);color:var(--green);margin-right:4px">${escHtml(h)}</span>`).join(''):'<span style="font-size:11px;color:var(--ink3)">No holidays in range</span>';
+        html+=`<div class="plan-item"><div><div class="plan-name">${escHtml(item.name)}</div><div class="plan-meta" style="margin-bottom:4px">${escHtml(item.country||'')} · ${item.days} days</div><div>${badges}</div></div><div class="plan-actions"><span class="status-pill range">Range</span><button class="remove-btn" onclick="removePlan('${item.date}','${escAttr(item.name)}')">✕</button></div></div>`;
+      } else {
+        const d=new Date(item.date+'T00:00:00');
+        html+=`<div class="plan-item"><div><div class="plan-name">${escHtml(item.name)}</div><div class="plan-meta">${DAY_NAMES[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}${item.country?' · '+escHtml(item.country):''}</div></div><div class="plan-actions"><span class="status-pill planned">Planned</span><button class="remove-btn" onclick="removePlan('${item.date}','${escAttr(item.name)}')">✕</button></div></div>`;
+      }
+    });
+    html+='</div>';
+  });
+  html+=`<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="export-btn" onclick="exportPlan()">↓ Export as .txt</button><button class="export-btn" style="background:var(--surf2);color:var(--ink)" onclick="clearPlan()">✕ Clear all</button></div></div>`;
+  mc.innerHTML+=html;
+}
+
+const INSPIRATION=[
+  {emoji:'🏔',bg:'#e8f4fd',name:'Ladakh, India',sub:'Best in May–Sep',tags:['Adventure','Mountains','Buddhist']},
+  {emoji:'🏖',bg:'#e6f4ec',name:'Goa, India',sub:'Best in Nov–Feb',tags:['Beach','Nightlife','Culture']},
+  {emoji:'🌸',bg:'#fdf3e0',name:'Kyoto, Japan',sub:'Cherry blossoms in April',tags:['Culture','Temples','Nature']},
+  {emoji:'🏰',bg:'#f0ebfb',name:'Prague, Czechia',sub:'Magical year-round',tags:['History','Architecture','Food']},
+  {emoji:'🦁',bg:'#fdecea',name:'Masai Mara, Kenya',sub:'Migration in Jul–Oct',tags:['Safari','Wildlife','Nature']},
+  {emoji:'🏝',bg:'#e8f4fd',name:'Maldives',sub:'Idyllic any time',tags:['Beach','Luxury','Snorkelling']},
+  {emoji:'🗽',bg:'#f0ece5',name:'New York, USA',sub:'Magical in Dec',tags:['City','Culture','Shopping']},
+  {emoji:'🌅',bg:'#fdf3e0',name:'Santorini, Greece',sub:'Best Apr–Oct',tags:['Romance','Sunsets','Seafood']},
+  {emoji:'🐉',bg:'#e6f4ec',name:'Bali, Indonesia',sub:'Year-round paradise',tags:['Yoga','Temples','Surfing']},
+  {emoji:'🎭',bg:'#f0ebfb',name:'Paris, France',sub:'Romantic any time',tags:['Art','Food','Fashion']},
+  {emoji:'🦘',bg:'#fdecea',name:'Sydney, Australia',sub:'Dec–Feb summer',tags:['Beaches','Harbour','Wildlife']},
+  {emoji:'🌮',bg:'#fdf3e0',name:'Mexico City',sub:'Best Oct–Apr',tags:['Street food','Art','Ancient']}
+];
+
+function renderInspiration(mc){
+  let html=`<div class="section-title fade-up">Travel Inspiration ✈</div><div style="font-size:14px;color:var(--ink2);margin-bottom:20px" class="fade-up">Destinations worth planning a break around.</div><div class="inspiration-grid fade-up fade-up-d1">`;
+  INSPIRATION.forEach(d=>{html+=`<div class="inspo-card" onclick="notify('Added ${escAttr(d.name)} to your inspiration list!')"><div class="inspo-img" style="background:${d.bg}">${d.emoji}</div><div class="inspo-body"><div class="inspo-title">${escHtml(d.name)}</div><div class="inspo-sub">${escHtml(d.sub)}</div><div class="inspo-tags">${d.tags.map(t=>`<span class="inspo-tag">${t}</span>`).join('')}</div></div></div>`});
+  html+='</div>';
+  mc.innerHTML+=html;
+}
+
+function renderShare(mc){
+  const countryName=COUNTRIES.find(c=>c.code===state.country)?.name||state.country;
+  const today=new Date();today.setHours(0,0,0,0);
+  const upcoming=state.holidays.filter(x=>x.dateObj>=today).slice(0,6);
+  let html=`<div class="fade-up">
+    <div class="section-title" style="margin-bottom:8px">Your ${state.year} Holiday Plan</div>
+    <div style="font-size:14px;color:var(--ink2);margin-bottom:20px">Share your holiday plan with friends and family.</div>
+    <div class="share-card-preview">
+      <div class="share-card-inner">
+        <div class="share-card-logo">✈ NextLongBreak</div>
+        <div class="share-card-title">My ${state.year} breaks in<br><em>${escHtml(countryName)}</em></div>
+        <div class="share-card-holidays">
+          ${upcoming.map(h=>`<div class="share-holiday-chip">${fmtShort(h.date)} · ${escHtml(h.name)}</div>`).join('')}
+          ${state.savedPlan.slice(0,3).map(p=>`<div class="share-holiday-chip" style="background:rgba(45,122,79,0.25);border-color:rgba(45,122,79,0.4)">★ ${escHtml(p.name)}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn primary" onclick="copyShareText()">Copy holiday list</button>
+      <button class="share-btn secondary" onclick="exportPlan()">Download .txt plan</button>
+      <button class="share-btn secondary" onclick="shareNative()">Share…</button>
+    </div>
+  </div>`;
+  html+=`<div class="fade-up fade-up-d1" style="margin-top:32px">
+    <div class="section-title" style="margin-bottom:12px">Upcoming Reminders</div>
+    <div style="display:flex;flex-direction:column;gap:8px">`;
+  state.holidays.filter(x=>x.dateObj>=today).slice(0,5).forEach(h=>{
+    const daysAway=Math.ceil((h.dateObj-today)/86400000);
+    const urgency=daysAway<=7?'var(--red)':daysAway<=30?'var(--amber)':'var(--green)';
+    html+=`<div class="plan-item"><div><div class="plan-name">${escHtml(h.name)}</div><div class="plan-meta">${fmtDisplay(h.date)}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:600;color:${urgency}">${daysAway===0?'Today!':daysAway+' days away'}</div>${h.strategies?.[0]?`<div style="font-size:11px;color:var(--ink3);margin-top:2px">${h.strategies[0].tip}</div>`:''}</div></div>`;
+  });
+  html+='</div></div>';
+  mc.innerHTML+=html;
+}
+
+window.setFilter=function(f){state.filter=f;render()};
+window.setSearch=function(v){state.search=v;render()};
+window.calNav=function(dir){state.calYear+=dir;render()};
+window.toggleSave=function(date,name){
+  const idx=state.savedPlan.findIndex(p=>p.date===date&&p.name===name);
+  const cn=COUNTRIES.find(c=>c.code===state.country)?.name||state.country;
+  if(idx>-1){state.savedPlan.splice(idx,1);notify(`Removed "${name}" from plan`)}
+  else{state.savedPlan.push({date,name,country:cn});notify(`Saved "${name}" to your plan ★`)}
+  savePersist();updateStats();render();
+};
+window.removePlan=function(date,name){
+  state.savedPlan=state.savedPlan.filter(p=>!(p.date===date&&p.name===name));
+  savePersist();updateStats();notify('Removed from plan');render();
+};
+window.clearPlan=function(){
+  if(!confirm('Clear all saved plans?'))return;
+  state.savedPlan=[];savePersist();updateStats();render();
+};
+window.exportPlan=function(){
+  const cn=COUNTRIES.find(c=>c.code===state.country)?.name||state.country;
+  const lines=[`NextLongBreak — My Holiday Plan`,`Country: ${cn} | Year: ${state.year}`,'─'.repeat(40),'','★ SAVED PLANS:',...(state.savedPlan.length?state.savedPlan.sort((a,b)=>a.date.localeCompare(b.date)).map(p=>p.isRange?`  ${p.date}–${p.endDate}  ${p.name}  [${p.days} days]`:` ${p.date}  ${p.name}`):['  (none)']),'','ALL HOLIDAYS:',...state.holidays.map(h=>{const s=h.strategies?.[0];return`  ${h.date}  ${h.name}${s&&s.leaves>0?'  → '+s.tip:''}`}),'',`Generated by NextLongBreak on ${new Date().toLocaleDateString()}`];
+  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`holiday-plan-${cn.replace(/\s+/g,'-').toLowerCase()}-${state.year}.txt`;a.click();notify('Plan exported!');
+};
+window.copyShareText=function(){
+  const cn=COUNTRIES.find(c=>c.code===state.country)?.name||state.country;
+  const today=new Date();today.setHours(0,0,0,0);
+  const text=[`🗓 My ${state.year} Holiday Plan — ${cn}`,'',...state.holidays.filter(x=>x.dateObj>=today).slice(0,8).map(h=>`• ${fmtShort(h.date)}: ${h.name}${h.strategies?.[0]?.leaves>0?' → '+h.strategies[0].tip:''}`),``,`Made with NextLongBreak ✈`].join('\n');
+  navigator.clipboard.writeText(text).then(()=>notify('Copied to clipboard!')).catch(()=>notify('Copy not supported'));
+};
+window.shareNative=async function(){
+  const cn=COUNTRIES.find(c=>c.code===state.country)?.name||state.country;
+  if(navigator.share){try{await navigator.share({title:'NextLongBreak',text:`My ${state.year} holiday plan for ${cn} — NextLongBreak ✈`})}catch{}}
+  else copyShareText();
+};
+window.notify=notify;
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function escAttr(s){return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;')}
+
+initSelects();initNav();loadAndRender();
+</script>
+</body>
+</html>
